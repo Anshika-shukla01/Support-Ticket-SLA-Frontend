@@ -6,6 +6,7 @@ import TicketList from "./components/TicketList";
 import CreateTicket from "./components/CreateTicket";
 import TicketDetails from "./components/TicketDetails";
 import { setAuthToken } from "./api/graphql";
+import UserManagement from "./components/UserManagement";
 
 type User = {
   id: string;
@@ -30,6 +31,7 @@ function App() {
   const [showCreate, setShowCreate] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [showUsers, setShowUsers] = useState(false);
 
   function handleAuth(nextUser: User) {
     setUser(nextUser);
@@ -97,7 +99,25 @@ function App() {
                 <h1>Tickets</h1>
                 <p>Monitor your queue and keep every response within SLA.</p>
               </div>
-              {user.role === "USER" && <button className="primary-button" onClick={() => setShowCreate(true)}>＋ New ticket</button>}
+              <div className="heading-actions">
+                {user.role === "USER" && (
+                  <button
+                    className="primary-button"
+                    onClick={() => setShowCreate(true)}
+                  >
+                    ＋ New ticket
+                  </button>
+                )}
+
+                {user.role === "ADMIN" && (
+                  <button
+                    className="primary-button"
+                    onClick={() => setShowUsers(true)}
+                  >
+                    Manage Users
+                  </button>
+                )}
+              </div>
             </section>
 
             {showCreate && (
@@ -105,6 +125,22 @@ function App() {
                 <div className="modal-card">
                   <button className="modal-close" onClick={() => setShowCreate(false)} aria-label="Close">×</button>
                   <CreateTicket onCreated={() => { setShowCreate(false); setRefreshKey((v) => v + 1); }} />
+                </div>
+              </div>
+            )}
+
+            {showUsers && (
+              <div className="modal-backdrop" role="presentation">
+                <div className="modal-card">
+                  <button
+                    className="modal-close"
+                    onClick={() => setShowUsers(false)}
+                    aria-label="Close"
+                  >
+                    ×
+                  </button>
+
+                  <UserManagement />
                 </div>
               </div>
             )}
